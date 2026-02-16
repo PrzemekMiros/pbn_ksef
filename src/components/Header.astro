@@ -1,0 +1,149 @@
+---
+import logo from "../assets/images/global/logo.png";
+import Search from "astro-pagefind/components/Search";
+const { settings } = Astro.props;
+const pathname = Astro.url?.pathname ?? "";
+const isActive = (href) =>
+	href === "/" ? pathname === "/" : pathname.startsWith(href);
+const navItems = [
+	{ href: "/psychosomatyka/", label: "Psychosomatyka" },
+    { href: "/problemy-trawienne/", label: "Trawienie" },
+    { href: "/uklad-nerwowy/", label: "Układ nerwowy" },
+    { href: "/sen-i-regeneracja/", label: "Sen i regeneracja" },
+    { href: "/hormony/", label: "Hormony" },
+    { href: "/odpornosc/", label: "Odporność" },
+	{ href: "/artykuly/", label: "Artykuły" },
+];
+const linkClass = (href) =>
+	isActive(href)
+		? "px-3 py-2.5 text-black no-underline transition"
+		: "px-3 py-2.5 text-black/70 no-underline transition hover:text-black";
+---
+
+<header class="fixed left-0 right-0 top-0 z-500 bg-white/95">
+    <div class="mx-auto max-w-7xl px-7">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 space-between items-center py-3">
+            <div>
+                <a href="/" class="text-xl font-bold tracking-tighter text-black no-underline" aria-label="Logo">
+                    <img src={logo.src} class="w-32 md:w-38" width="280" height="66" alt="Logo Zdrowie bez paniki">
+                </a>
+            </div>
+            <div class="hidden md:flex items-center">
+                <div class="w-full max-w-[420px]">
+                    <Search
+                        id="site-search"
+                        className="pagefind-ui pagefind-ui--header"
+                        uiOptions={{ showImages: false, showDates: true, showCategories: true }}
+                    />
+                </div>
+            </div>
+            <div class="hidden md:flex justify-end">
+              <svg width="36" height="36" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_169_43)">
+<path d="M67 41.2353H56.1429V25H39.8571V41.2353H29L48 60.1765L67 41.2353ZM29 65.5882V71H67V65.5882H29Z" fill="black"/>
+</g>
+<rect x="1" y="1" width="94" height="94" rx="47" stroke="black" stroke-width="2"/>
+<defs>
+<clipPath id="clip0_169_43">
+<rect width="96" height="96" rx="48" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+            </div>
+            
+            <button
+                class="w-22 border border-white/10 text-[10px] mr-0 ml-auto font-bold uppercase tracking-[0.2em] text-black transition hover:bg-white/10 md:hidden"
+                type="button"
+                data-mobile-toggle
+            >
+                Menu
+            </button>
+
+        </div>
+
+        <nav class="flex items-center justify-end md:justify-between gap-4 border-y border-black/20">
+            <div class="hidden items-center justify-center gap-8 md:flex">
+                {
+                    navItems.map((item) => (
+                        <a
+                            class={`${linkClass(item.href)} text-[12px] uppercase font-bold tracking-[0.1em] transition-colors hover:text-black`}
+                            href={item.href}
+                            aria-current={isActive(item.href) ? "page" : undefined}
+                        >
+                            {item.label}
+                        </a>
+                    ))
+                }
+            </div>
+
+        </nav>
+
+        <div
+            class="fixed inset-x-0 top-0 z-[60] h-screen flex flex-col gap-6 overflow-hidden bg-[#0a0a0a] p-8 text-white transition-all duration-300 pointer-events-none opacity-0 md:hidden"
+            id="mobile-menu"
+            data-mobile-menu
+        >
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-widest text-gray-500">Nawigacja</span>
+                <button
+                    class="text-[10px] font-bold uppercase tracking-widest text-orange-500"
+                    type="button"
+                    data-mobile-close
+                >
+                    Zamknij
+                </button>
+            </div>
+
+            <div class="flex flex-col gap-6 pt-12">
+                {
+                    navItems.map((item) => (
+                        <a
+                            class="text-xl font-semibold tracking-tight text-white no-underline"
+                            href={item.href}
+                            data-mobile-link
+                        >
+                            {item.label}
+                        </a>
+						<div class="border border-b border-white/10"></div>
+                    ))
+                }
+            </div>
+
+        </div>
+    </div>
+</header>s
+
+<style>
+    /* Klasa pomocnicza dla otwartego menu */
+    #mobile-menu.is-open {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+</style>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        const toggle = document.querySelector("[data-mobile-toggle]");
+        const menu = document.querySelector("[data-mobile-menu]");
+        const closeBtn = document.querySelector("[data-mobile-close]");
+        const links = document.querySelectorAll("[data-mobile-link]");
+
+        if (toggle && menu) {
+            const setOpen = (isOpen) => {
+                menu.classList.toggle("is-open", isOpen);
+                document.body.style.overflow = isOpen ? "hidden" : "";
+            };
+
+            toggle.addEventListener("click", () => setOpen(true));
+            closeBtn?.addEventListener("click", () => setOpen(false));
+            
+            /*
+            // Zamknij po kliknięciu w link
+            links.forEach(link => {
+                link.addEventListener("click", () => setOpen(false));
+            });
+            */
+        }
+    });
+</script>

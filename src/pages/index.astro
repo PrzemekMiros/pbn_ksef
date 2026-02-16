@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GridOne from "../components/home/gridOne.astro";
+import GridTwo from "../components/home/GridTwo.astro";
+import GridThree from "../components/home/GridThree.astro";
+import GridFour from "../components/home/GridFour.astro";
+import GridFive from "../components/home/GridFive.astro";
+import GridSix from "../components/home/GridSix.astro";
+import LoopText from "../components/home/LoopText.astro";
+import BanerOne from "../components/home/BanerOne.astro";
+import settings from "../content/ustawienia.json";
+
+const { site } = Astro;
+const baseUrl = site ? site.toString().replace(/\/$/, "") : "";
+const siteUrl = baseUrl ? `${baseUrl}/` : "/";
+const siteLogo = settings.logo ? (baseUrl ? `${baseUrl}${settings.logo}` : settings.logo) : "";
+---
+
+<BaseLayout
+  title="Porady o zdrowym trybie życia"
+  description="Odkryj praktyczne porady i artykuły na temat zdrowego stylu życia, odżywiania i wellness."
+  showHero={false}
+>
+  <div itemscope itemtype="https://schema.org/WebSite">
+    <meta itemprop="name" content={settings.siteTitle} />
+    <meta itemprop="url" content={siteUrl} />
+    <div itemprop="publisher" itemscope itemtype="https://schema.org/Organization">
+      <meta itemprop="name" content={settings.siteTitle} />
+      {siteLogo ? <meta itemprop="logo" content={siteLogo} /> : null}
+    </div>
+  </div>
+
+  <LoopText />
+  <GridOne />
+  <BanerOne />
+  <GridTwo />
+  <GridThree />
+  <GridFour />
+  <GridFive />
+  <GridSix />
+
+</BaseLayout>
