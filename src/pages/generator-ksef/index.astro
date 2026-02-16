@@ -85,6 +85,14 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
             </button>
             <button
               type="button"
+              id="preview-pdf"
+              class="rounded-full border border-[var(--accent)] px-6 py-2 text-sm font-semibold text-[var(--accent)]"
+              disabled
+            >
+              Podglad PDF
+            </button>
+            <button
+              type="button"
               id="download-xml"
               class="rounded-full border border-gray-300 px-6 py-2 text-sm font-semibold text-gray-700"
               disabled
@@ -111,15 +119,123 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       </div>
     </div>
   </section>
+
+  <div
+    id="pdf-modal"
+    class="fixed inset-0 z-500 hidden flex items-center justify-center bg-black/50 p-4"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div class="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">Podglad PDF</h3>
+        <button
+          type="button"
+          id="close-pdf"
+          class="rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-600"
+        >
+          Zamknij
+        </button>
+      </div>
+      <p class="mt-2 text-sm text-gray-600">
+        Ten podglad jest generowany z XML. Wybierz "Pobierz PDF", aby zapisac plik z poziomu okna drukowania.
+      </p>
+      <div class="mt-4 max-h-[70vh] overflow-auto rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <div id="pdf-preview" class="rounded-lg bg-white p-6 shadow-sm"></div>
+      </div>
+      <div class="mt-5 flex flex-wrap justify-end gap-3">
+        <button
+          type="button"
+          id="download-pdf"
+          class="rounded-full bg-[var(--accent)] px-6 py-2 text-sm font-semibold text-white"
+        >
+          Pobierz PDF
+        </button>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
+
+<style is:inline>
+  .pdf-preview h1 {
+    font-family: "Times New Roman", serif;
+    font-size: 20px;
+    margin: 0 0 12px;
+    color: #111827;
+  }
+  .pdf-preview h2 {
+    font-family: "Times New Roman", serif;
+    font-size: 14px;
+    margin: 0 0 6px;
+    color: #111827;
+  }
+  .pdf-preview .meta {
+    font-size: 12px;
+    color: #111827;
+    margin-bottom: 12px;
+  }
+  .pdf-preview .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .pdf-preview .box {
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+  }
+  .pdf-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .pdf-preview th,
+  .pdf-preview td {
+    border: 1px solid #e5e7eb;
+    padding: 6px;
+    text-align: left;
+  }
+  .pdf-preview th {
+    background: #f9fafb;
+    font-weight: 600;
+  }
+  .pdf-preview .right {
+    text-align: right;
+  }
+  .pdf-preview .summary {
+    margin-top: 12px;
+    display: grid;
+    gap: 6px;
+  }
+  .pdf-preview .summary div {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .pdf-preview .muted {
+    color: #6b7280;
+    font-size: 11px;
+  }
+  @media (max-width: 768px) {
+    .pdf-preview .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 
 <script is:inline type="module">
   const form = document.getElementById("ksef-form");
   const itemsContainer = document.getElementById("items");
   const addItemBtn = document.getElementById("add-item");
   const generateBtn = document.getElementById("generate-xml");
+  const previewBtn = document.getElementById("preview-pdf");
   const downloadBtn = document.getElementById("download-xml");
   const output = document.getElementById("xml-output");
+  const pdfModal = document.getElementById("pdf-modal");
+  const pdfPreview = document.getElementById("pdf-preview");
+  const closePdfBtn = document.getElementById("close-pdf");
+  const downloadPdfBtn = document.getElementById("download-pdf");
 
   const defaultItem = () => ({
     name: "",
@@ -266,6 +382,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
   const setOutput = (xml) => {
     output.value = xml;
     downloadBtn.disabled = !xml;
+    previewBtn.disabled = !xml;
   };
 
   const handleGenerate = () => {
@@ -292,9 +409,180 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     URL.revokeObjectURL(url);
   };
 
+  const buildPdfHtml = (xml) => {
+    const invoiceHtml = buildInvoiceHtml(xml, true);
+    return `<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Podglad XML - PDF</title>
+    <style>
+      @page { margin: 18mm; }
+      body { font-family: "Times New Roman", serif; color: #111827; }
+      h1 { font-size: 18px; margin: 0 0 16px; }
+      h2 { font-size: 14px; margin: 0 0 8px; }
+      .meta { font-size: 12px; margin-bottom: 16px; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .box { border: 1px solid #e5e7eb; padding: 10px; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+      th, td { border: 1px solid #e5e7eb; padding: 6px; text-align: left; }
+      th { background: #f9fafb; }
+      .right { text-align: right; }
+      .summary { margin-top: 12px; width: 100%; display: grid; gap: 6px; }
+      .summary div { display: flex; justify-content: space-between; font-size: 12px; }
+      .muted { color: #6b7280; font-size: 11px; }
+    </style>
+  </head>
+  <body>
+    ${invoiceHtml}
+  </body>
+</html>`;
+  };
+
+  const getXmlText = (node, selector) => {
+    const el = node.querySelector(selector);
+    return el ? el.textContent || "" : "";
+  };
+
+  const buildInvoiceHtml = (xml, forPrint = false) => {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xml, "application/xml");
+    const hasError = xmlDoc.querySelector("parsererror");
+    if (hasError) {
+      const errorText = escapeXml(hasError.textContent || "Nieprawidlowy XML");
+      return `<div class="muted">Nie mozna zbudowac podgladu: ${errorText}</div>`;
+    }
+
+    const faktura = xmlDoc.querySelector("FakturaFA2");
+    if (!faktura) {
+      return `<div class="muted">Brak danych do podgladu.</div>`;
+    }
+
+    const invoiceNumber = getXmlText(faktura, "NumerFaktury");
+    const issueDate = getXmlText(faktura, "DataWystawienia");
+    const saleDate = getXmlText(faktura, "DataSprzedazy");
+    const sellerName = getXmlText(faktura, "Sprzedawca > Nazwa");
+    const sellerNip = getXmlText(faktura, "Sprzedawca > NIP");
+    const sellerAddress = getXmlText(faktura, "Sprzedawca > Adres");
+    const buyerName = getXmlText(faktura, "Nabywca > Nazwa");
+    const buyerNip = getXmlText(faktura, "Nabywca > NIP");
+
+    const positions = Array.from(faktura.querySelectorAll("Pozycje > Pozycja")).map((pos) => ({
+      lp: getXmlText(pos, "Lp"),
+      name: getXmlText(pos, "Nazwa"),
+      qty: getXmlText(pos, "Ilosc"),
+      unitNet: getXmlText(pos, "CenaNetto"),
+      vatRate: getXmlText(pos, "StawkaVAT"),
+      net: getXmlText(pos, "WartoscNetto"),
+      vat: getXmlText(pos, "KwotaVAT"),
+      gross: getXmlText(pos, "WartoscBrutto"),
+    }));
+
+    const totalNet = getXmlText(faktura, "Podsumowanie > RazemNetto");
+    const totalVat = getXmlText(faktura, "Podsumowanie > RazemVAT");
+    const totalGross = getXmlText(faktura, "Podsumowanie > RazemBrutto");
+
+    const rowsHtml = positions
+      .map(
+        (row) => `
+        <tr>
+          <td>${escapeXml(row.lp)}</td>
+          <td>${escapeXml(row.name)}</td>
+          <td class="right">${escapeXml(row.qty)}</td>
+          <td class="right">${escapeXml(row.unitNet)}</td>
+          <td class="right">${escapeXml(row.vatRate)}</td>
+          <td class="right">${escapeXml(row.net)}</td>
+          <td class="right">${escapeXml(row.vat)}</td>
+          <td class="right">${escapeXml(row.gross)}</td>
+        </tr>`
+      )
+      .join("");
+
+    const wrapperClass = forPrint ? "pdf-preview" : "pdf-preview";
+    return `
+      <div class="${wrapperClass}">
+        <h1>Faktura VAT</h1>
+        <div class="meta">
+          Numer: <strong>${escapeXml(invoiceNumber)}</strong><br />
+          Data wystawienia: ${escapeXml(issueDate)}<br />
+          Data sprzedazy: ${escapeXml(saleDate)}
+        </div>
+        <div class="grid">
+          <div class="box">
+            <h2>Sprzedawca</h2>
+            <div>${escapeXml(sellerName)}</div>
+            <div>NIP: ${escapeXml(sellerNip)}</div>
+            <div>${escapeXml(sellerAddress)}</div>
+          </div>
+          <div class="box">
+            <h2>Nabywca</h2>
+            <div>${escapeXml(buyerName)}</div>
+            <div>NIP: ${escapeXml(buyerNip)}</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Lp</th>
+              <th>Nazwa</th>
+              <th class="right">Ilosc</th>
+              <th class="right">Cena netto</th>
+              <th class="right">VAT</th>
+              <th class="right">Wartosc netto</th>
+              <th class="right">Kwota VAT</th>
+              <th class="right">Wartosc brutto</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml || `<tr><td colspan="8" class="muted">Brak pozycji</td></tr>`}
+          </tbody>
+        </table>
+        <div class="summary">
+          <div><span>Razem netto</span><strong>${escapeXml(totalNet)}</strong></div>
+          <div><span>Razem VAT</span><strong>${escapeXml(totalVat)}</strong></div>
+          <div><span>Razem brutto</span><strong>${escapeXml(totalGross)}</strong></div>
+        </div>
+      </div>
+    `;
+  };
+
+  const openPdfModal = () => {
+    if (!output.value) return;
+    pdfPreview.innerHTML = buildInvoiceHtml(output.value);
+    pdfModal.classList.remove("hidden");
+    pdfModal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("overflow-hidden");
+  };
+
+  const closePdfModal = () => {
+    pdfModal.classList.add("hidden");
+    pdfModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("overflow-hidden");
+  };
+
+  const handleDownloadPdf = () => {
+    if (!output.value) return;
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.open();
+    win.document.write(buildPdfHtml(output.value));
+    win.document.close();
+    win.focus();
+    setTimeout(() => {
+      win.print();
+      win.close();
+    }, 150);
+  };
+
   addItemBtn.addEventListener("click", () => itemsContainer.appendChild(createItemRow(defaultItem())));
   generateBtn.addEventListener("click", handleGenerate);
   downloadBtn.addEventListener("click", handleDownload);
+  previewBtn.addEventListener("click", openPdfModal);
+  closePdfBtn.addEventListener("click", closePdfModal);
+  pdfModal.addEventListener("click", (event) => {
+    if (event.target === pdfModal) closePdfModal();
+  });
+  downloadPdfBtn.addEventListener("click", handleDownloadPdf);
 
   itemsContainer.appendChild(createItemRow(defaultItem()));
 </script>
