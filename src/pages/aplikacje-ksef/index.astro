@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const apps = [
+  {
+    name: "Generator faktury testowej KSeF",
+    description: "Tworzy XML FA(2) na podstawie danych i pozwala pobrac plik.",
+    href: "/generator-ksef/",
+    tag: "Sandbox",
+  },
+];
+---
+
+<BaseLayout
+  title="Aplikacje KSeF"
+  description="Zestaw praktycznych narzedzi dla KSeF: generatory, walidatory i integracje."
+>
+  <section class="mb-16 mt-12 md:mb-24 md:mt-12">
+    <div class="flex items-center justify-between gap-6">
+      <div>
+        <p class="mt-2 text-lg text-gray-600">
+          Zestaw praktycznych narzedzi dla KSeF: generatory, walidatory i integracje.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {apps.map((app) => (
+        <a
+          class="group relative rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          href={app.href}
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">{app.tag}</span>
+            <span class="text-xs text-gray-400 group-hover:text-gray-600">Otworz</span>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-gray-900">{app.name}</h3>
+          <p class="mt-2 text-sm text-gray-600">{app.description}</p>
+          <div class="mt-6 h-1 w-12 rounded-full bg-[var(--accent2)] transition-all group-hover:w-20"></div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
