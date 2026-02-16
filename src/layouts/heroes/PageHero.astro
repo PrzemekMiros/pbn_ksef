@@ -24,7 +24,7 @@ const currentUrl = baseUrl ? new URL(url.pathname, baseUrl).toString() : url.pat
     <div class="absolute inset-0 bg-white/90"></div>
   </div>
   <div class="relative">
-    <div class="relative flex flex-col justify-center pb-8 pt-28 md:pb-14 md:pt-38 z-10">
+    <div class="relative flex flex-col justify-center pb-12 pt-28 md:pb-14 md:pt-38 z-10">
       <nav
         class="text-[8px] md:text-[10px] uppercase tracking-[0.1em] text-gray-500 mb-3 md:mb-4 font-semibold"
         aria-label="Breadcrumb"
@@ -53,13 +53,3 @@ const currentUrl = baseUrl ? new URL(url.pathname, baseUrl).toString() : url.pat
   </div>
 </section>
 
-  <section class="relative py-5 border-b border-gray-200">
-    {meta ? (
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">{meta}</p>
-    ) : (
-      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 md:mb-0">
-        <span class="text-[10px] mt-1 md:mt-0 text-gray-400 uppercase font-bold tracking-tighter">Sprawdź przydatne narzędzia do Ksef </span>
-      </div>
-    )}
-
-  </section>

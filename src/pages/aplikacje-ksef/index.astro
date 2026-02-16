@@ -15,15 +15,7 @@ const apps = [
   title="Aplikacje KSeF"
   description="Zestaw praktycznych narzedzi dla KSeF: generatory, walidatory i integracje."
 >
-  <section class="mb-16 mt-12 md:mb-24 md:mt-12">
-    <div class="flex items-center justify-between gap-6">
-      <div>
-        <p class="mt-2 text-lg text-gray-600">
-          Zestaw praktycznych narzedzi dla KSeF: generatory, walidatory i integracje.
-        </p>
-      </div>
-    </div>
-
+  <section class="mb-16 mt-4 md:mb-24 md:mt-8">
     <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {apps.map((app) => (
         <a
@@ -32,7 +24,7 @@ const apps = [
         >
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">{app.tag}</span>
-            <span class="text-xs text-gray-400 group-hover:text-gray-600">Otworz</span>
+            <span class="text-xs text-gray-400 group-hover:text-gray-600">Otwórz</span>
           </div>
           <h3 class="mt-4 text-lg font-semibold text-gray-900">{app.name}</h3>
           <p class="mt-2 text-sm text-gray-600">{app.description}</p>
