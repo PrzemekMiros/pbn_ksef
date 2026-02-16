@@ -6,13 +6,12 @@ const pathname = Astro.url?.pathname ?? "";
 const isActive = (href) =>
 	href === "/" ? pathname === "/" : pathname.startsWith(href);
 const navItems = [
-	{ href: "/psychosomatyka/", label: "Psychosomatyka" },
-    { href: "/problemy-trawienne/", label: "Trawienie" },
-    { href: "/uklad-nerwowy/", label: "Układ nerwowy" },
-    { href: "/sen-i-regeneracja/", label: "Sen i regeneracja" },
-    { href: "/hormony/", label: "Hormony" },
-    { href: "/odpornosc/", label: "Odporność" },
-	{ href: "/artykuly/", label: "Artykuły" },
+	{ href: "/podstawy-ksef/", label: "Podstawy KSeF" },
+    { href: "/wdrozenie-ksef/", label: "Wdrozenie KSeF" },
+    { href: "/integracje-i-api/", label: "Integracje i API" },
+    { href: "/prawo-i-terminy/", label: "Prawo i terminy" },
+    { href: "/bezpieczenstwo-i-uprawnienia/", label: "Bezpieczenstwo i uprawnienia" },
+	{ href: "/artykuly/", label: "Artykuly" },
 ];
 const linkClass = (href) =>
 	isActive(href)
@@ -25,7 +24,7 @@ const linkClass = (href) =>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 space-between items-center py-3">
             <div>
                 <a href="/" class="text-xl font-bold tracking-tighter text-black no-underline" aria-label="Logo">
-                    <img src={logo.src} class="w-32 md:w-38" width="280" height="66" alt="Logo Zdrowie bez paniki">
+                    <img src={logo.src} class="w-32 md:w-58" width="280" height="66" alt="Logo Portal KSeF">
                 </a>
             </div>
             <div class="hidden md:flex items-center">
@@ -147,3 +146,4 @@ const linkClass = (href) =>
         }
     });
 </script>
+

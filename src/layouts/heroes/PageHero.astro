@@ -23,7 +23,7 @@ const currentUrl = baseUrl ? new URL(url.pathname, baseUrl).toString() : url.pat
    </div>
     <div class="absolute inset-0 bg-black/60"></div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1.66fr)_minmax(0,1fr)] min-h-[320px] relative">
+  <div class="min-h-[320px] relative">
     <div class="relative flex flex-col justify-center pb-8 pt-28 md:pb-16 md:pt-42 z-10">
       <nav
         class="text-[8px] md:text-[10px] uppercase tracking-[0.1em] text-gray-300 mb-3 md:mb-4 font-semibold"
@@ -46,7 +46,7 @@ const currentUrl = baseUrl ? new URL(url.pathname, baseUrl).toString() : url.pat
           <meta itemprop="position" content="2" />
         </span>
       </nav>
-      <h1 class="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-[1.1] text-white tracking-tight max-w-2xl">
+      <h1 class="text-3xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-[1.1] text-white tracking-tight">
         {title}
       </h1>
     </div>

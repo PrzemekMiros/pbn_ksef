@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import { slugifyTitle } from "../../lib/slugifyTitle";
 
-const TARGET_CATEGORY = "Układ nerwowy";
+const TARGET_CATEGORY = "Integracje i API";
 const TARGET_CATEGORY_SLUG = slugifyTitle(TARGET_CATEGORY);
 const imageEntries = import.meta.glob("/src/content/artykuly/img/**/*", { eager: true });
 
@@ -170,7 +170,7 @@ const getPostUrl = (post) => `/artykuly/${post.categorySlug}/${post.slug}/`;
     </div>
   ) : (
     <p class="rounded-md border border-dashed border-gray-300 bg-white/70 p-6 text-sm text-gray-500">
-      Brak wpisow w kategorii „{TARGET_CATEGORY}”.
-    </p>
+      Brak wpisow w kategorii "Integracje i API".</p>
   )}
 </div>
+

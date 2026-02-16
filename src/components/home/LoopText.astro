@@ -52,7 +52,7 @@ const getPostUrl = (post) => `/artykuly/${post.categorySlug}/${post.slug}/`;
           const dateLabel = item.date ? formatDate(item.date) : null;
           return (
             <div class="flex items-center px-4">
-              <span class="text-xl mr-3">•</span>
+              <span class="text-xl mr-3">*</span>
               <span class="mr-2 opacity-80">{dateLabel}</span>
               <a href={getPostUrl(item)} class="hover:underline underline-offset-2">
                 {item.title}
@@ -64,3 +64,4 @@ const getPostUrl = (post) => `/artykuly/${post.categorySlug}/${post.slug}/`;
     ))}
   </div>
 </div>
+
