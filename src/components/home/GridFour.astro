@@ -83,7 +83,7 @@ const getPostUrl = (post) => `/artykuly/${post.categorySlug}/${post.slug}/`;
             <Image
               src={resolveArticleImage(featured.tileImage ?? featured.thumbnail)}
               alt={featured.title ?? featured.slug}
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              class="w-full h-[360px] md:h-full object-cover transition-transform duration-700 group-hover:scale-110"
               widths={[480, 768, 960, 1280]}
               sizes="(max-width: 768px) 100vw, 50vw"
               loading="lazy"
